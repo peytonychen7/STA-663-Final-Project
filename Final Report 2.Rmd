@@ -164,7 +164,7 @@ We randomly generated a matrix $A_1$ with size $1000 \times 36$ and a matrix wit
 
 ### 3.3.2 Cythonize the `log_likelyhood` function
 
-As we can see from the comparison above, cythonizing the liklyhood function does not outperfrom the original likelyhood function. One of the reasons can be our cython code still depends heavily on functions in the numpy package to compute the determinant and the inverse function. Using numpy functions in cython may create unnecessary overhead. Due to the complex data structures in cython, we chose to stick with the original `likelyhood` function for now.
+Then we tried to cynthonize the `log_likelyhood` function. However, it does not outperfrom the original likelyhood function. One of the reasons can be our cython code still depends heavily on functions in the numpy package to compute the determinant and the inverse function. Using numpy functions in cython may create unnecessary overhead. Due to the complex data structures in cython, we chose to stick with the original `likelyhood` function for now.
 
 ### 3.3.3 Numba
 
