@@ -11,6 +11,6 @@ The test codes are located in the `Test code` folder.
 
 Examples of the implementation of our algorithms can be found in the `Example` directory. 
 
-The final report of our project can be found in the `Report` directory. 
+The final report is in the main repository.
 
 `IBP_Sampler_w_Desc.ipynb` walks through each of the functions and their purpose 
