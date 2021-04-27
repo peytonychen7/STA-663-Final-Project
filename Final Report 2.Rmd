@@ -118,6 +118,7 @@ e) Sample $\alpha$ from its posterior gamma distribution
 
 In this section, we explore a few optimization methods to make the sampler more efficient. The test results can be found in section 3.4. The testing detail can be founded in the `Optimization.ipynb` in the GitHub repository.
 
+To test the performance, we used the example images used in Ilker Yildirim’s paper as my simulation data set (Yildirim 2012). The detail of the numerical example can be found in Section 4.
 
 ## 3.1 Profile
 
@@ -126,7 +127,6 @@ We adopt the decorator from a post on Medium written by Farhad Malik (Malik 2020
 We generated an initial profile in Figure 1. From the profile above, we can see that most of the runtime was spent on the `log_likelyhood` function. Therefore, we concentrated our energy to explore how to optimize the performance of our `log_likelyhood` function.
 
 ![Profile of the Original Sampler](Image/Profile_python.PNG)
-
 
 
 ## 3.2 Optimization of Matrix Calculations
@@ -176,16 +176,16 @@ We also tried to use numba for matrix multiplication. But we found that the spee
 The table below shows a brief summary of the average speed of different methods when we tested them with `niter = 100`.
 
 ```{r,echo=FALSE}
-df <- data.frame(Original = 32.9,
-                 Linear_solve = 34.3,
-                 SVD = 39.2,
-                 Reduce = 33.2,
-                 Cython = 36.5)
+df <- data.frame(Original = 11.7,
+                 Linear_solve = 12.3,
+                 SVD = 14.4,
+                 Reduce = 12.3,
+                 Cython = 13.1)
 row.names(df) <- c("Speed (in seconds)")
 kable(df)
 ```
 
-Based on the results, we did not find any method that provides a significant improvment for the speed of the algorithm. Therefore, we decided to use the original function written with numpy as final algorithm.
+Based on the results, we did not find any method that provides a significant improvement for the speed of the algorithm. Therefore, we decided to use the original function written with numpy as final algorithm.
 
 
 # 4 Applications to Simulated Data Sets
@@ -282,9 +282,18 @@ While both involve finding latent features they do have some pretty stark differ
 
 ## 6.2 Comparing with an MATLAB Code Online
 
-In section 4, we used the example images used in Ilker Yildirim's paper as my simulation data set to test the accuracy of our algorithm. In this section, we compare the speed of our algorithm with the written in MATLAB in this paper (Yildirim 2012). We continue to use the same example images and ran the sampler with the input `niter=1000`. We profiled the the MATLAB code and found the total runtime to be about 255 seconds (Figure X).  This appears to be slower than our algorithm in Python. As shown in section 4, our results are consistent with the results produced by Yildirim.  
+In section 3 & 4, we used the example images used in Ilker Yildirim's paper as my simulation data set to test the performance and accuracy of our algorithm. In this section, we compare the speed of our algorithm with the written in MATLAB in this paper (Yildirim 2012). We continue to use the same example images and ran the sampler with the same input for `niter=1000`. We profiled the the MATLAB code and found the total runtime to be about 255 seconds (Figure 2).  This appears to be slower than our algorithm in Python. The simulation result can be found in Figure 3.  
 
 ![Profile of the Original Sampler](Image/Profile_MATLAB.PNG)
+
+<p>
+![Simulation Results Using MATLAB](Image/MATLAB_Sim_Res.PNG)
+$$
+\begin{aligned}
+\text{Figure 3: Simulation Results Using MATLAB}
+\end{aligned}
+$$
+<p>
 
 # 7 Conclusion
 
