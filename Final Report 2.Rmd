@@ -16,7 +16,7 @@ The dimensionality of representation is a critical question to solve in unsuperv
 
 # 1 Introduction
 
-Unsupervised learning techniques have gained attention in academia and the industry due to their application in a variety of fields, such as image and pattern recognition, cancer research, consumer research, etc (Bouguila et al, 2005; ISLR). These techniques can help us identify the properties of objects even in the absence of response variables. The properties of these objects can be better captured if we use multiple latent features to represent the objects (Griffiths & Ghahramani, 2005). As we work with latent features, one question we often need to consider is how many latent features do we need to use to represent the objects (Griffiths & Ghahramani, 2005). The number of latent features can be finite or infinite. If we assume the dimension is infinite, one way to determine the latent structure is to use a Bayesian latent feature model, in which we use a prior distribution to represent the number of latent features needed, and use the likelihood function to analyze how these latent features are associated with the objects in the data set. The Indian buffet process provides an efficient way to generate a prior distribution for a latent feature model over equivalence classes of binary matrices with a finite number of rows but potentially an infinite number of columns. Such a model can be used to represent each object with a large number of latent features.
+Unsupervised learning techniques have gained attention in academia and the industry due to their application in a variety of fields, such as image and pattern recognition, cancer research, consumer research, etc (Bouguila et al, 2005; ISLR, 2013). These techniques can help us identify the properties of objects even in the absence of response variables. The properties of these objects can be better captured if we use multiple latent features to represent the objects (Griffiths & Ghahramani, 2005). As we work with latent features, one question we often need to consider is how many latent features do we need to use to represent the objects. The number of latent features can be finite or infinite. If we assume the dimension is infinite, one way to determine the latent structure is to use a Bayesian latent feature model, in which we use a prior distribution to represent the number of latent features needed, and use the likelihood function to analyze how these latent features are associated with the objects in the data set (Griffiths & Ghahramani, 2005). The Indian buffet process provides an efficient way to generate a prior distribution for a latent feature model over equivalence classes of binary matrices with a finite number of rows but potentially an infinite number of columns. Such a model can be used to represent each object with a large number of latent features.
 
 One of the applications of the Indian buffet process is image processing. For example, Dang and Chainais applied the Indian buffet process as a prior and proposed a Bayesian nonparametric approach called Indian buffet process dictionary learning. The algorithm was applied to image inpainting and compressive sensing (Dang & Chainais, 2017).
 
@@ -51,7 +51,7 @@ $$
 
 ## 2.2 Applying the Indian buffet process to a linear-Gaussian binary latent feature model
 
-We use the linear-Gaussian binary latent feature model dervied in the paper, where the likelihood function is as follows:
+We use the linear-Gaussian binary latent feature model derived in the paper, where the likelihood function is as follows:
 
 $$
 \begin{aligned}
@@ -83,9 +83,9 @@ With each iteration, we will be checking to see if any new columns ($K_{new}$) m
 
 $$
 \begin{aligned}
-&Prior: P(K_{new} \mid \alpha) \propto Poisson(\frac{\alpha}{N}) \\
-&Posterior: P(K_{new} \mid \textbf{X},\textbf{Z},\sigma_X, \sigma_A, \alpha) \propto P(K_{new} \mid \alpha) P(\textbf{X} \mid \textbf{Z*}, \sigma_X, \sigma_A) \\
-&\textbf{Z*} = Z\ with\ K_{new}\ columns\ appended
+&\text{Prior}: P(K_{new} \mid \alpha) \propto Poisson(\frac{\alpha}{N}) \\
+&\text{Posterior}: P(K_{new} \mid \textbf{X},\textbf{Z},\sigma_X, \sigma_A, \alpha) \propto P(K_{new} \mid \alpha) P(\textbf{X} \mid \textbf{Z*}, \sigma_X, \sigma_A) \\
+&\textbf{Z*} = Z \text{ with } K_{new} \text{ columns appended}
 \end{aligned}
 $$
 
@@ -97,9 +97,9 @@ The Distribution of $\alpha$ is as so:
 
 $$
 \begin{aligned}
-&Prior: P(\alpha) \propto Gamma(a,b) \\
-&Posterior: P(\alpha \mid \textbf{Z}) \propto Gamma(a + K,b + H_{n}) \\
-&a\ and\ b\ are\ hyperparamaters
+&\text{Prior}: P(\alpha) \propto Gamma(a,b) \\
+&\text{Posterior}: P(\alpha \mid \textbf{Z}) \propto Gamma(a + K,b + H_{n}) \\
+&\text{where }a \text{ and } b \text{ are hyperparamaters}
 \end{aligned}
 $$
 
@@ -124,20 +124,20 @@ To test the performance, we used the example images used in Ilker Yildirim’s p
 
 We adopt the decorator from a post on Medium written by Farhad Malik (Malik 2020) to profile our original python code. 
 
-We generated an initial profile in Figure 1. From the profile above, we can see that most of the runtime was spent on the `log_likelyhood` function. Therefore, we concentrated our energy to explore how to optimize the performance of our `log_likelyhood` function.
+We generated an initial profile in Figure 1. From the profile, we can see that most of the runtime was spent on the `log_likelyhood` function. Therefore, we concentrated our energy to explore how to optimize the performance of our `log_likelyhood` function.
 
 ![Profile of the Original Sampler](Image/Profile_python.PNG)
 
 
 ## 3.2 Optimization of Matrix Calculations
 
-First, we explored ways to optimize the `log_likelyhood` function by calculating the determinant and inverse of matrix $\textbf{M}$ differently.
+First, we explored ways to optimize the `log_likelyhood` function by calculating the determinant and inverse of matrix $\textbf{M}$ more efficiently.
 
 We define a `sampler_test` function that allows us to use different log likelyhood functions as input. We test each method using the same inputs with `niter = 100`.
 
 ### 3.2.1 Replacing `inv` with `solve`
 
-In this approach, we consider replacing the calculation of inverse matrix with linear solve. Our intuition is linear solve may have a smaller complexity than calculating the inverse of matrix $\textbf{M}$. We have to calculate $\textbf{Z} \textbf{M}^{-1} \textbf{Z}^T$. So instead of calculating `Z @ np.linalg.inv(M) @ Z.T`, we tried `Z @ np.linalg.solve(M, Z.T)`. 
+In this approach, we consider replacing the calculation of inverse matrix with linear solve. Our intuition is linear solve may have a smaller complexity than calculating the inverse of matrix $\textbf{M}$. We have to calculate $\textbf{Z} \textbf{M}^{-1} \textbf{Z}^T$. So instead of calculating `Z @ np.linalg.inv(M) @ Z.T`, we tried `Z @ np.linalg.solve(M, Z.T)` in this case. 
 
 However, we found the performance is comparable. Using `np.linalg.solve` may not have a noticeable improvement for the function.
 
@@ -145,7 +145,7 @@ However, we found the performance is comparable. Using `np.linalg.solve` may not
 
 We also explored a way of computing the determinant and the inverse matrix using singular value decomposition. Since $\textbf{Z}^T \textbf{Z} + \frac{\sigma_X^2}{\sigma_A^2}\textbf{I}$ is a nonsingular matrix, we can calculate the determinant by calculating the products of the singular values $s$. Once we have $U$ and $V^T$ from the singular value decomposition, we can also calculate the inverse of matrix $\textbf{M}$ as $V D^{-1} U^T$ where $D^{-1}$ is a diagonal matrix with diagonal elements $1/s$.
 
-But the performance is comparable to the original likelyhood function. It may be a bit slower than the original function. This may be due to the computational time required by finding the singular value decomposition.
+But the performance is comparable to the original likelyhood function. It may be a bit slower than the original function. This may be due to the considerable amount of computational time required by finding the singular value decomposition.
 
 ### 3.2.3 Using functools
 
@@ -154,13 +154,13 @@ We also tried to use the `reduce` function from `functools` to see if we can imp
 
 ## 3.3 Cython and Numba
 
-Next, we tried to optimize the `log_likelyhood` function using cython. We compared the speed of doing matrix multiplication using the `@` operator in numpy with a matrix multiplication function written in cython. 
+Next, we tried to optimize the `log_likelyhood` function using cython.
 
 ### 3.3.1 Comparing the performance of matrix multiplication
 
 First, we compared the performance for matrix multiplication between the `@` operator in numpy and the `matrix_multiply` function we wrote in cython.
 
-We randomly generated a matrix $A_1$ with size $1000 \times 36$ and a matrix with $A_2$ with size $36 \times 1000$ to compare the performance of matrix multiplication. We found that our `matrix_multiply` function written in cython is much slower than the `@` operator in numpy. Since matrix multiplications take a considerable amount of time in the `log_likelyhood` function, we decided not to use `matrix_multiply` function but wrote a cythonized `log_likelyhood` function using the `matmul` function in numpy. 
+We randomly generated a matrix $A_1$ with size of $1000 \times 36$ and a matrix with $A_2$ with size of $36 \times 1000$ to compare the performance of matrix multiplication. We found that our `matrix_multiply` function written in cython is much slower than the `@` operator in numpy. Since matrix multiplications take a considerable amount of time in the `log_likelyhood` function, we decided not to use `matrix_multiply` function but wrote a cythonized `log_likelyhood` function using the `matmul` function in numpy. 
 
 ### 3.3.2 Cythonize the `log_likelyhood` function
 
@@ -233,7 +233,7 @@ Both simulations returned very similar latent features not only to each other bu
 
 # 5 Applications to Real Data Sets
 
-In addition to the simulation, we also ran our algorithm against a real world dataset to gain deeper insights into the application of IBP. For this real world Example, we choose 6 images of a die with each image corresponding to a number on a die. 
+In addition to the simulation, we also ran our algorithm against a real world dataset to gain deeper insights into the application of IBP. For this real world example, we choose 6 images of a die with each image corresponding to a number on a die. 
 
 <p>
 ![Dice](Image/Dice.PNG)  
@@ -282,7 +282,7 @@ While both involve finding latent features they do have some pretty stark differ
 
 ## 6.2 Comparing with an MATLAB Code Online
 
-In section 3 & 4, we used the example images used in Ilker Yildirim's paper as my simulation data set to test the performance and accuracy of our algorithm. In this section, we compare the speed of our algorithm with the written in MATLAB in this paper (Yildirim 2012). We continue to use the same example images and ran the sampler with the same input for `niter=1000`. We profiled the the MATLAB code and found the total runtime to be about 255 seconds (Figure 2).  This appears to be slower than our algorithm in Python. The simulation result can be found in Figure 3.  
+In section 3 & 4, we used the example images used in Ilker Yildirim's paper as my simulation data set to test the performance and accuracy of our algorithm. In this section, we compare the speed of our algorithm with the written in MATLAB in this paper (Yildirim 2012). The sample code can be found in Ilker Yildirim's homepage in MIT (http://www.mit.edu/~ilkery/). We continue to use the same example images and ran the sampler with the same inputs for `niter=1000`. We profiled the the MATLAB code and found the total runtime to be about 255 seconds (Figure 2).  This appears to be slower than our algorithm in Python. The simulation result (Figure 3) is similar to our result in section 4.  
 
 ![Profile of the Original Sampler](Image/Profile_MATLAB.PNG)
 
