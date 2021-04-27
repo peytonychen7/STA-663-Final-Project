@@ -309,7 +309,7 @@ For more information about the code, diagrams, or package installation regarding
 
 # 8 Contributions
 
-Raghav Agrawal, MSS Class of 2022 at Duke Iniversity   
+Raghav Agrawal, MSS Class of 2022 at Duke University   
 
 - Developed the inital algorithm  
 
@@ -317,7 +317,7 @@ Raghav Agrawal, MSS Class of 2022 at Duke Iniversity
 
 - Comparative Analysis to Chinese Buffet Process and Conclusion
 
-Peyton Chen, MSS Class of 2022 at Duke Iniversity  
+Peyton Chen, MSS Class of 2022 at Duke University  
 
 - Performed Optimation tests to ensure algorithm was efficent
 
